@@ -147,7 +147,8 @@ class AuthController {
                             name: user.name,
                             email: user.email,
                             image: user.image,
-                            role: user.role
+                            role: user.role,
+                            location: user.location
 
                         }
                     },
@@ -195,7 +196,8 @@ class AuthController {
                             email: user.email,
                             image: user.image,
                             role: user.role,
-                            vehicle: user.vehicle
+                            vehicle: user.vehicle,
+                            location: user.location
 
 
                         }
@@ -227,6 +229,46 @@ class AuthController {
             next(exception)
         }
 
+    }
+
+    updateLocation = async (req, res, next) => {
+        try {
+            console.log("🔹 Full Request Body:", req.body); // Logs everything in the request
+            console.log("🔹 req.authUser:", req.authUser); // Check if authUser exists
+
+            const userId = req.authUser.id
+            const location = req.body.location
+            console.log("Updating location for:", userId); // Debugging
+            console.log("Received location:", location); // Debugging
+            if (req.authUser.role === 'customer') {
+                await authSvc.updateMyLocationUser(userId, location)
+                res.json({
+                    detail: req.authUser,
+                    message: "Location updated successfully",
+                    status: "LOCATION_UPDATED",
+                    options: null
+
+                })
+
+            } else {
+                await authSvc.updateMyLocation(userId, location)
+                res.json({
+                    detail: req.authUser,
+                    message: "Location updated successfully",
+                    status: "LOCATION_UPDATED",
+                    options: null
+
+                })
+
+            }
+
+
+
+
+
+        } catch (exception) {
+            next(exception)
+        }
     }
 
 

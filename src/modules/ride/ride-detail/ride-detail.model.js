@@ -7,7 +7,7 @@ const RideSchema = new mongoose.Schema({
     rider: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Rider",
-        required: false // Rider may not be assigned immediately for scheduled rides
+        required: true // Rider may not be assigned immediately for scheduled rides
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -31,12 +31,11 @@ const RideSchema = new mongoose.Schema({
     fare: {
         type: Number,
         // required: true
-        default: 0
+        required: true
     },
     distance: {
         type: Number, // Distance in kilometers
-        // required: true
-        default: 0
+        required: true
     },
     status: {
         type: String,
@@ -56,21 +55,28 @@ const RideSchema = new mongoose.Schema({
     },
     signature: {
         type: String
-
     },
     vehicleType: {
         type: String,
         required: true
-
     },
     vehicleDetails: {
         vehicleType: {
             type: String,
             enum: ['car', 'bike'],
-            // required: true
+            default: 'bike',
+            required: true
         },
-        model: String,
-        plateNumber: String
+        model: {
+            type: String,
+            required: true
+        },
+        plateNumber: {
+            type: String,
+            required: true
+        }
+      
+
     },
     rideStartTime: Date,
     rideEndTime: Date,
@@ -91,7 +97,6 @@ const RideSchema = new mongoose.Schema({
     autoCreate: true,
     autoIndex: true
 });
-RideSchema.index({ "pickUpLocation": "2dsphere" });
 
 const RideModel = mongoose.model("Ride", RideSchema);
 

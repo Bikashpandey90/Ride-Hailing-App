@@ -25,7 +25,8 @@ const checkLogin = async (req, res, next) => {
             image: user.image,
             status: user.status,
             phone: user.phone,
-            address: user.address
+            address: user.address,
+            location: user.location
         }
         next()
     } catch (exception) {
@@ -61,7 +62,8 @@ const checkLoginRider = async (req, res, next) => {
             status: user.status,
             phone: user.phone,
             address: user.address,
-            vehicle: user.vehicle
+            vehicle: user.vehicle,
+            location: user.location
         }
         next()
     } catch (exception) {

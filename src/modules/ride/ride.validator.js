@@ -14,6 +14,27 @@ const RideRequestDTO = Joi.object({
     vehicleType: Joi.string().required()
 });
 
+const fetchRecentRidesDTO = Joi.object({
+    location: Joi.object({
+        latitude: Joi.number().required(),
+        longitude: Joi.number().required()
+    }).required()
+
+})
+
+const RideStartDTO = Joi.object({
+    rideId: Joi.string().required(),
+    status: "ongoing"
+
+})
+const confirmRideDTO = Joi.object({
+    rideId: Joi.object().required()
+
+})
+
 module.exports = {
-    RideRequestDTO
+    RideRequestDTO,
+    RideStartDTO,
+    confirmRideDTO,
+    fetchRecentRidesDTO
 }

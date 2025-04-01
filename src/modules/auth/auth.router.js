@@ -12,11 +12,14 @@ authRouter.post('/register', uploader().single('image'), bodyValidator(registerD
 authRouter.post('/activate', bodyValidator(activationDTO), authCtrl.activateUser)
 authRouter.post('/login', bodyValidator(loginDTO), authCtrl.login)
 authRouter.get('/me', checkLogin, authCtrl.getLoggedInUser)
+authRouter.patch('/update-location', checkLogin, authCtrl.updateLocation)   //todo:validation
+
 
 authRouter.post('/register-rider', uploader().single('image'), bodyValidator(registerRiderDTO), authCtrl.registerRider)
 authRouter.post('/activate-rider', bodyValidator(activationDTO), authCtrl.activateRider)
 authRouter.post('/login-rider', bodyValidator(loginDTO), authCtrl.loginRider)
 authRouter.get('/me-rider', checkLoginRider, authCtrl.getLoggedInUser)
+authRouter.patch('/update-location-rider', checkLoginRider, authCtrl.updateLocation)  //todo:validation
 
 
 

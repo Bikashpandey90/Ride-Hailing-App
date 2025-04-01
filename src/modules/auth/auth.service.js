@@ -210,10 +210,10 @@ class AuthService {
                 _v: 0,
                 createdAt: 0,
                 updatedAt: 0,
-                nid:0,
-                license:0,
-                vehicle:0,
-                
+                nid: 0,
+                license: 0,
+                vehicle: 0,
+
 
             }).sort({
                 createdAt: "desc"
@@ -227,6 +227,40 @@ class AuthService {
             throw exception
         }
 
+    }
+    updateMyLocation = async (userId, location) => {
+        try {
+            const response = await RiderModel.findByIdAndUpdate(
+                userId,
+                {
+                    location: location
+                },
+                {
+                    new: true
+                })
+            return response
+
+        } catch (exception) {
+            console.log("updateMyLocation", exception)
+            throw exception
+        }
+    }
+    updateMyLocationUser = async (userId, location) => {
+        try {
+            const response = await UserModel.findByIdAndUpdate(
+                userId,
+                {
+                    location: location
+                },
+                {
+                    new: true
+                })
+            return response
+
+        } catch (exception) {
+            console.log("updateMyLocation", exception)
+            throw exception
+        }
     }
 
 
