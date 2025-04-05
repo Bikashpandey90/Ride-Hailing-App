@@ -51,6 +51,10 @@ const RideSchema = new mongoose.Schema({
     paymentId: {
         type: String,
     },
+    isPaid: {
+        type: Boolean,
+        default: false
+    },
     orderId: {
         type: String,
     },

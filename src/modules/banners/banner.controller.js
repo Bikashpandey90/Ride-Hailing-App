@@ -74,6 +74,12 @@ class BannerController {
             const data = await bannerSvc.getSingleByFilter({
                 _id: req.params.id
             })
+            if (!data) {
+                return res.status(400).json({
+                    message: "Ride not found",
+                    status: "INVALID_RIDE_ID"
+                })
+            }
             const response = await bannerSvc.deleteByFilter({
                 _id: req.params.id
             })

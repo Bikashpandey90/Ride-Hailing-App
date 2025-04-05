@@ -1,5 +1,6 @@
 const RideModel = require('./ride.model');
-const axios = require('axios')
+const axios = require('axios');
+const TransactionModel = require('./transactions/transaction.model');
 
 
 class RideService {
@@ -174,8 +175,12 @@ class RideService {
     }
     fetchRecentRides = async (riderLocation) => {
         try {
+            const vehicleType = req.authUser.vehicle.vehicleType
+            let filter = { vehicleType: vehicleType }
+
 
             const response = await RideModel.find({
+                ...filter,
                 pickUpLocation: {
                     $nearSphere: {
                         $geometry: {
@@ -222,6 +227,50 @@ class RideService {
         } catch (exception) {
             console.log("updateRideDetails exception : ", exception)
             throw exception
+        }
+    }
+    getSingleRideByFilter = async (filter) => {
+        try {
+            const rideDetail = await RideModel.findOne(filter)
+            if (!rideDetail) {
+                throw { code: 400, message: "Ride Not found", status: "RIDE_NOT_FOUND" }
+            }
+            return rideDetail
+
+        } catch (exception) {
+            console.log("getSingleRideById exception : ", exception)
+            throw exception
+        }
+    }
+    getAllOrderByDetail = async (filter) => {
+        try {
+            const rides = await RideModel.find(filter)
+
+            return rides
+
+        } catch (exception) {
+            console.log("getAllOrderByDetail exception : ", exception)
+            throw exception
+        }
+    }
+    populateTransation = async (transactionData) => {
+        try {
+            const transactionObj = new TransactionModel(transactionData)
+            return await transactionObj.save()
+
+        } catch (exception) {
+            console.log("populateTransation exception : ", exception)
+            throw exception
+        }
+    }
+    updateOneRideByFilter = async (filter, data) => {
+        try {
+            const response = await RideModel.findOneAndUpdate(filter, { $set: data }, { new: true })
+            return response
+        } catch (exception) {
+            console.log("updateOneRideByFilter exception : ", exception)
+            throw exception
+
         }
     }
 
