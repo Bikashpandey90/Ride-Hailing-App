@@ -1,12 +1,24 @@
 const Joi = require("joi");
+const geoJSONPointSchema = Joi.object({
+    type: Joi.string().default('Point').valid('Point').optional(),
+    coordinates: Joi.array()
+        .items(
+            Joi.number().required(), // longitude
+            Joi.number().required()  // latitude
+        )
+        .length(2)
+        .required()
+});
 
 const RideRequestDTO = Joi.object({
     userId: Joi.string().required(),
 
-    pickUpLocation: Joi.object({
-        latitude: Joi.number().required(),
-        longitude: Joi.number().required()
-    }).required(),
+    // pickUpLocation: Joi.object({
+    //     latitude: Joi.number().required(),
+    //     longitude: Joi.number().required()
+    // }).required(),
+    pickUpLocation: geoJSONPointSchema.required(),
+
     dropOffLocation: Joi.object({
         latitude: Joi.number().required(),
         longitude: Joi.number().required()
@@ -27,7 +39,7 @@ const RideStartDTO = Joi.object({
     status: Joi.string().valid("ongoing", "completed").required()
 })
 const confirmRideDTO = Joi.object({
-    rideId: Joi.object().required()
+    rideId: Joi.string().required()
 
 })
 const PaymentDTO = Joi.object({

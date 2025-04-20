@@ -13,9 +13,9 @@ class RideService {
             const distanceTime = await this.calculateDistanceTime(pickup, destination);
 
             let fare;
-            if (vehicleType === 'Car') {
+            if (vehicleType === 'car') {
                 fare = distanceTime.distance * 10 + distanceTime.time * 2; // Example fare calculation for car
-            } else if (vehicleType === 'Bike') {
+            } else if (vehicleType === 'bike') {
                 fare = distanceTime.distance * 5 + distanceTime.time * 1; // Example fare calculation for bike
             } else {
                 throw new Error('Unsupported vehicle type');
@@ -56,7 +56,7 @@ class RideService {
             // return { distance: distance / 1000 }; // Convert meters to kilometers
 
             const response = await axios.get('https://router.project-osrm.org/route/v1/driving/' +
-                `${pickup.longitude},${pickup.latitude};${destination.longitude},${destination.latitude}`, {
+                `${pickup.coordinates[0]},${pickup.coordinates[1]};${destination.longitude},${destination.latitude}`, {
                 params: {
                     overview: 'false',
                     geometries: 'geojson'
@@ -173,9 +173,28 @@ class RideService {
             throw exception
         }
     }
-    fetchRecentRides = async (riderLocation) => {
+    //  haversineDistance = (coords1, coords2) => {
+    //     const toRad = (x) => x * Math.PI / 180
+
+    //     const R = 6371e3 // Earth's radius in meters
+    //     const dLat = toRad(coords2.latitude - coords1.latitude)
+    //     const dLon = toRad(coords2.longitude - coords1.longitude)
+
+    //     const lat1 = toRad(coords1.latitude)
+    //     const lat2 = toRad(coords2.latitude)
+
+    //     const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    //               Math.cos(lat1) * Math.cos(lat2) *
+    //               Math.sin(dLon/2) * Math.sin(dLon/2)
+
+    //     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    //     const d = R * c
+
+    //     return d // in meters
+    // }
+
+    fetchRecentRides = async (riderLocation, vehicleType) => {
         try {
-            const vehicleType = req.authUser.vehicle.vehicleType
             let filter = { vehicleType: vehicleType }
 
 
@@ -185,13 +204,13 @@ class RideService {
                     $nearSphere: {
                         $geometry: {
                             type: "Point",
-                            coordinates: [riderLocation.latitude, riderLocation.longitude]
+                            coordinates: [riderLocation.longitude, riderLocation.latitude]
                         },
                         $maxDistance: 1000, // 1 km radius
                     }
                 }
 
-            })
+            }).populate('userId', ["_id", "name", "email", "status", "image"])
             return response
 
         } catch (exception) {
@@ -200,15 +219,17 @@ class RideService {
     }
     updateRideWithRider = async (rideId, riderDetails) => {
         try {
+            console.log(riderDetails, "services")
             const response = await RideModel.findByIdAndUpdate(
                 rideId,
                 {
-                    rider: riderDetails._id,
+                    rider: riderDetails.id,
                     vehicleDetails: riderDetails.vehicle,
                     status: "accepted"
 
                 },
                 { new: true })
+                .populate('rider', ["_id", "name", "email", "status"])
             return response
 
         } catch (exception) {
@@ -222,6 +243,8 @@ class RideService {
             }, {
                 new: true
             })
+                .populate('rider', ["_id", "name", "email", "status"])
+                .populate('userId', ["_id", "name", "email", "status"])
             return response
 
         } catch (exception) {
@@ -271,6 +294,16 @@ class RideService {
             console.log("updateOneRideByFilter exception : ", exception)
             throw exception
 
+        }
+    }
+    deleteRideById = async (rideId) => {
+        try {
+            const response = await RideModel.findByIdAndDelete(rideId)
+            return response
+
+        } catch (exception) {
+            console.log("deleteRideById exception : ", exception)
+            throw exception
         }
     }
 

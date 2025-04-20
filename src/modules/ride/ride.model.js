@@ -14,13 +14,26 @@ const RideSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
+    // pickUpLocation: {
+    //     type: {
+    //         latitude: Number,
+    //         longitude: Number
+    //     },
+    //     required: true
+    // },
     pickUpLocation: {
         type: {
-            latitude: Number,
-            longitude: Number
+            type: String,
+            enum: ['Point'],
+            required: true,
+            default: 'Point'
         },
-        required: true
+        coordinates: {
+            type: [Number], // [longitude, latitude]
+            required: true
+        }
     },
+    
     dropOffLocation: {
         type: {
             latitude: Number,
@@ -95,6 +108,8 @@ const RideSchema = new mongoose.Schema({
     autoCreate: true,
     autoIndex: true
 });
+
+
 RideSchema.index({ "pickUpLocation": "2dsphere" });
 
 const RideModel = mongoose.model("Ride", RideSchema);

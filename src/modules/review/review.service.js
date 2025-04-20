@@ -33,8 +33,11 @@ class ReviewService {
             throw exception
         }
     }
-    getRiderReviewsByFilter = async (filter) => {
+    getRiderReviewsByFilter = async (riderId) => {
         try {
+            const filter={
+                rider:riderId
+            }
             const response = await Review.find(filter)
             return response
 

@@ -9,19 +9,22 @@ class ReviewController {
                 user: req.authUser.id
             }
             const rideDetail = await rideSvc.getSingleRideByFilter(req.body.rideId)
-            if (!(rideDetail.status === 'completed')) {
-                return res.status(400).json({
-                    message: "Ride must be completed to add review",
-                    status: "INVALID_RIDE_STATUS"
+            console.log(rideDetail)
 
-                })
-            }
             if (!rideDetail) {
                 return res.status(400).json({
                     message: "Ride not found",
                     status: "INVALID_RIDE_ID"
                 })
             }
+            if (rideDetail.status !== 'completed') {
+                return res.status(400).json({
+                    message: "Ride must be completed to add review",
+                    status: "INVALID_RIDE_STATUS"
+
+                })
+            }
+
             const review = await reviewSvc.create(data)
 
             res.json({
@@ -67,6 +70,14 @@ class ReviewController {
             const data = await reviewSvc.getSingleReviewByFilter({
                 _id: id
             })
+
+            if (!data) {
+                res.json({
+                    message: "Review not found",
+                    status: "REVIEW_NOT_FOUND",
+                    options: null
+                })
+            }
 
             res.json({
                 detail: data,

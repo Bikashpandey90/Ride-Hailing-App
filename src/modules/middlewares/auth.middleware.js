@@ -31,6 +31,11 @@ const checkLogin = async (req, res, next) => {
         next()
     } catch (exception) {
         if (exception.name === 'TokenExpiredError') {
+            return res.json({
+                message: "Token Expired",
+                status: "TOKEN_EXPIRED",
+                options: null,
+            })
             next({ code: 401, message: "Token Expired", status: "TOKEN_EXPIRED" })
         } else if (exception.name === 'JsonWebTokenWebError') {
             next({ code: 401, message: exception.message, status: "TOKEN_ERROR" })

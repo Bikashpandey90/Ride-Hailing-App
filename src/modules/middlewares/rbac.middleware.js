@@ -6,7 +6,7 @@ const allowedRoles = (role) => {
                 throw { code: 403, message: "Unauthorized", status: "ROLE_NOT_ASSIGNED" }
             }
             if ((typeof role === 'string' && loggedInUserRole === role) ||
-                (Array.isArray(role) && role.includes(loggedinUserRole))
+                (Array.isArray(role) && role.includes(loggedInUserRole))
             ) {
                 next()
             } else {

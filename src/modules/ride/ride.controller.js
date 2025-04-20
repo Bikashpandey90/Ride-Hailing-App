@@ -27,8 +27,12 @@ class RideController {
     getRides = async (req, res, next) => {
         try {
             const riderLocation = req.body.location
+            const vehicleType = req.authUser.vehicle.vehicleType
 
-            const rides = await rideSvc.fetchRecentRides(riderLocation)
+            console.log(riderLocation, vehicleType)
+
+
+            const rides = await rideSvc.fetchRecentRides(riderLocation, vehicleType)
 
             res.json({
                 detail: rides,
@@ -44,23 +48,23 @@ class RideController {
     }
     confirmRide = async (req, res, next) => {
         try {
-            const { rideId } = req.body
-            const riderDetails = req.authUser
-            console.log(riderDetails)
-            const ride = await rideSvc.updateRideWithRider(rideId, riderDetails)
+            const rideId = req.body.rideId; // Correctly assign rideId
+            const riderDetails = req.authUser;
+            console.log(riderDetails);
+            const ride = await rideSvc.updateRideWithRider(rideId, riderDetails);
 
             res.json({
                 detail: ride,
                 status: "RIDE_ASSIGNED",
                 message: "Ride assigned successfully",
                 options: null
-            })
+            });
 
         } catch (exception) {
-            next(exception)
+            next(exception);
         }
     }
-    updateRide = async (req, res, next) => {
+    updateRideStatus = async (req, res, next) => {
         try {
 
             const data = req.body
@@ -89,11 +93,11 @@ class RideController {
             const rideDetail = await rideSvc.getSingleRideByFilter({
                 _id: rideId
             })
-            if (!(rideDetail.status === 'completed')) {
-                res.json({
+            if (rideDetail.status !== 'completed') {
+                return res.json({
                     detail: null,
-                    status: "CANNOT_MAKE_PAYMENT",
-                    message: "Cannot make payment",
+                    status: "CANNOT_MAKE_PAYMENT_NOW",
+                    message: "Cannot make payment before ride completion",
                     options: null
 
                 })
@@ -120,6 +124,95 @@ class RideController {
                 options: null
 
             })
+
+
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    getRideDetail = async (req, res, next) => {
+        try {
+            const rideId = req.params.id
+
+            const rideDetail = await rideSvc.getSingleRideByFilter({
+                _id: rideId
+            })
+
+
+            //manage user handling user and rider should be allowed to see their rides only
+
+
+            if (!rideDetail) {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_FOUND",
+                    message: "Ride not found",
+                    options: null
+
+                })
+            }
+
+            res.json({
+                detail: rideDetail,
+                status: "RIDE_FETCH_SUCCESS",
+                message: "Ride fetched successfully",
+                options: null
+
+            })
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    deleteRide = async (req, res, next) => {
+        try {
+            const rideId = req.params.id
+            const rideDetail = await rideSvc.getSingleRideByFilter({
+                _id: rideId
+            })
+            if (!rideDetail) {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_FOUND",
+                    message: "Ride not found",
+                    options: null
+
+                })
+            }
+
+            await rideSvc.deleteRideById(rideId)
+
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    updateRide = async (req, res, next) => {
+        try {
+            const rideId = req.params.id
+            const rideDetail = await RideModel.findById(rideId)
+            const data = req.body
+            
+            if (!rideDetail) {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_FOUND",
+                    message: "Ride not found",
+                    options: null
+
+                })
+            }
+            const response = await rideSvc.updateRideDetails(rideId, data)
+
+            res.json({
+                detail: response,
+                status: "RIDE_UPDATED",
+                message: "Ride updated successfully",
+                options: null
+
+            })
+
 
 
 

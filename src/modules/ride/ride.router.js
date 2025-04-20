@@ -9,8 +9,14 @@ const rideRouter = require('express').Router()
 rideRouter.post('/request', checkLogin, bodyValidator(RideRequestDTO), rideCtrl.requestRide)
 rideRouter.post('/rides', checkLoginRider, bodyValidator(fetchRecentRidesDTO), rideCtrl.getRides)
 rideRouter.patch('/accept-ride', checkLoginRider, bodyValidator(confirmRideDTO), rideCtrl.confirmRide)
-rideRouter.patch('/update-ride-status', checkLoginRider, bodyValidator(RideStartDTO), rideCtrl.updateRide)
-//rideRouter.post('/:id/payment', checkLogin, allowedRoles['admin', 'customer'], bodyValidator(PaymentDTO), rideCtrl.makePayment)
+rideRouter.patch('/update-ride-status', checkLoginRider, bodyValidator(RideStartDTO), rideCtrl.updateRideStatus)
+rideRouter.post('/payment/:id', checkLogin, allowedRoles(['admin', 'customer']), bodyValidator(PaymentDTO), rideCtrl.makePayment)
+
+rideRouter.route('/:id')
+    .get(checkLogin, allowedRoles(['admin', 'customer']), rideCtrl.getRideDetail)
+    .delete(checkLogin, allowedRoles(['admin']), rideCtrl.deleteRide)
+    .patch(checkLogin, allowedRoles(['admin']), rideCtrl.updateRide)
+
 
 
 
