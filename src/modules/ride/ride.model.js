@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const { required } = require("joi");
+
 const { commonStr } = require("../../common/schema");
 
 const RideSchema = new mongoose.Schema({
