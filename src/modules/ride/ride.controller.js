@@ -1,3 +1,4 @@
+const authSvc = require("../auth/auth.service");
 const rideSvc = require("./ride.service");
 
 class RideController {
@@ -193,7 +194,7 @@ class RideController {
             const rideId = req.params.id
             const rideDetail = await RideModel.findById(rideId)
             const data = req.body
-            
+
             if (!rideDetail) {
                 return res.json({
                     detail: null,
@@ -214,6 +215,36 @@ class RideController {
             })
 
 
+
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    getRecentRideLocations = async (req, res, next) => {
+        try {
+            const userId = req.authUser.id
+            const userCheck = await authSvc.getSingleUserByFilter(userId)
+            if (!userCheck) {
+                return res.json({
+                    detail: null,
+                    status: "USER_NOT_FOUND",
+                    message: "User not found",
+                    options: null
+
+                })
+            }
+            const rideLocations = await rideSvc.getRecentRideLocation(userCheck._id)
+
+            console.log(userCheck._id)
+
+            res.json({
+                detail: rideLocations,
+                status: "RIDE_LOCATION_FETCH_SUCCESS",
+                message: "Ride location fetched successfully",
+                options: null
+
+            })
 
 
         } catch (exception) {

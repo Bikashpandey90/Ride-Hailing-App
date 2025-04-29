@@ -18,12 +18,14 @@ const RideRequestDTO = Joi.object({
     //     longitude: Joi.number().required()
     // }).required(),
     pickUpLocation: geoJSONPointSchema.required(),
+    dropOffLocation: geoJSONPointSchema.required(),
 
-    dropOffLocation: Joi.object({
-        latitude: Joi.number().required(),
-        longitude: Joi.number().required()
-    }).required(),
-    vehicleType: Joi.string().required()
+
+    // dropOffLocation: Joi.object({
+    //     latitude: Joi.number().required(),
+    //     longitude: Joi.number().required()
+    // }).required(),
+    vehicleType: Joi.string().default('bike').required()
 });
 
 const fetchRecentRidesDTO = Joi.object({

@@ -33,14 +33,26 @@ const RideSchema = new mongoose.Schema({
             required: true
         }
     },
-    
     dropOffLocation: {
         type: {
-            latitude: Number,
-            longitude: Number
+            type: String,
+            enum: ['Point'],
+            required: true,
+            default: 'Point'
         },
-        required: true
+        coordinates: {
+            type: [Number], // [longitude, latitude]
+            required: true
+        }
     },
+    
+    // dropOffLocation: {
+    //     type: {
+    //         latitude: Number,
+    //         longitude: Number
+    //     },
+    //     required: true
+    // },
     fare: {
         type: Number,
         // required: true

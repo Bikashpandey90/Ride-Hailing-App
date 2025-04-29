@@ -10,7 +10,8 @@ rideRouter.post('/request', checkLogin, bodyValidator(RideRequestDTO), rideCtrl.
 rideRouter.post('/rides', checkLoginRider, bodyValidator(fetchRecentRidesDTO), rideCtrl.getRides)
 rideRouter.patch('/accept-ride', checkLoginRider, bodyValidator(confirmRideDTO), rideCtrl.confirmRide)
 rideRouter.patch('/update-ride-status', checkLoginRider, bodyValidator(RideStartDTO), rideCtrl.updateRideStatus)
-rideRouter.post('/payment/:id', checkLogin, allowedRoles(['admin', 'customer']), bodyValidator(PaymentDTO), rideCtrl.makePayment)
+rideRouter.post('/payment/:id', checkLogin, allowedRoles(['admin','customer']), bodyValidator(PaymentDTO), rideCtrl.makePayment)
+rideRouter.get('/recent-ride-locations',checkLogin, allowedRoles(['admin','customer']), rideCtrl.getRecentRideLocations)
 
 rideRouter.route('/:id')
     .get(checkLogin, allowedRoles(['admin', 'customer']), rideCtrl.getRideDetail)

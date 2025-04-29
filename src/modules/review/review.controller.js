@@ -71,8 +71,18 @@ class ReviewController {
                 _id: id
             })
 
+            const userId = req.authUser.id
+
+            if (data.user !== userId) {
+                return res.status(403).json({
+                    message: "You are not authorized to view this review",
+                    status: "UNAUTHORIZED_REVIEW_ACCESS"
+                })
+            }
+
+
             if (!data) {
-                res.json({
+                return res.json({
                     message: "Review not found",
                     status: "REVIEW_NOT_FOUND",
                     options: null
@@ -96,6 +106,15 @@ class ReviewController {
             const data = await reviewSvc.getSingleReviewByFilter({
                 _id: req.params.id
             })
+
+            const userId = req.authUser.id
+
+            if (data.user !== userId) {
+                return res.status(403).json({
+                    message: "You are not authorized to delete this review",
+                    status: "UNAUTHORIZED_REVIEW_ACCESS"
+                })
+            }
             if (!data) {
                 res.json({
                     message: "Review not found",
@@ -125,6 +144,13 @@ class ReviewController {
             const data = await reviewSvc.getSingleReviewByFilter({
                 _id: req.params.id
             })
+            const userId = req.authUser.id
+            if (data.user !== userId) {
+                return res.status(403).json({
+                    message: "You are not authorized to update this review",
+                    status: "UNAUTHORIZED_REVIEW_ACCESS"
+                })
+            }
             if (!data) {
                 res.json({
                     message: "Review not found",

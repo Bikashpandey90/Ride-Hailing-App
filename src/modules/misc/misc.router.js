@@ -5,7 +5,7 @@ const miscCtrl = require('./misc.controller');
 const miscRouter = require('express').Router();
 
 miscRouter.post('/save-address', checkLogin, allowedRoles(['admin', 'customer']), miscCtrl.saveAddress)
-miscRouter.post('/get-saved-address', checkLogin, allowedRoles(['admin', 'customer']), miscCtrl.getSavedAddress)
+miscRouter.get('/get-saved-address', checkLogin, allowedRoles(['admin', 'customer']), miscCtrl.getSavedAddress)
 
 miscRouter.route('/:id')
     .get(checkLogin, allowedRoles(['admin', 'customer']), miscCtrl.getSavedAddressDetail)

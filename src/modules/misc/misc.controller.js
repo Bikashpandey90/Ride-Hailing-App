@@ -7,7 +7,17 @@ class MiscController {
         try {
             const { locationName, location, isDefault, status, title } = req.body
 
-            const userId = req.authUser._id
+            const userId = req.authUser.id
+            console.log("userId : ", userId)
+
+            if (!userId) {
+                return res.json({
+                    status: "INVALID_USER",
+                    message: "User not found",
+                    options: null
+
+                })
+            }
 
 
             const response = await miscSvc.createSaveAddress(userId, locationName, location, isDefault, status, title)
@@ -28,7 +38,7 @@ class MiscController {
     getSavedAddress = async (req, res, next) => {
         try {
 
-            const userId = req.body
+            const userId = req.authUser.id
 
             const user = await authSvc.getSingleUserByFilter(userId)
             if (!user) {
@@ -76,7 +86,7 @@ class MiscController {
         try {
             const saveAddressId = req.params.id
 
-            const userId = req.authUser._id
+            const userId = req.authUser.id
 
 
 
@@ -119,11 +129,11 @@ class MiscController {
     deleteSavedAddress = async (req, res, next) => {
         try {
             const savedAddressId = req.params.id
-            const userId = req.authUser._id
+            const userId = req.authUser.id
 
             const Address = await miscSvc.getSavedAddressById(savedAddressId)
 
-            if (AddressDetail.userId.toString() !== userId.toString()) {
+            if (Address.userId.toString() !== userId.toString()) {
                 return res.json({
                     detail: null,
                     status: "INVALID_USER",
@@ -169,11 +179,13 @@ class MiscController {
 
     updateSavedAddress = (req, res, next) => {
         try {
-            const { locationName, location, isDefault, status, title } = req.body
 
-            const savedAddressId = req.params.id
+            //todo: update saved address
+            // const { locationName, location, isDefault, status, title } = req.body
 
-            
+            // const savedAddressId = req.params.id
+
+
 
 
 

@@ -55,8 +55,15 @@ class RideService {
             // console.log(distance)
             // return { distance: distance / 1000 }; // Convert meters to kilometers
 
+            // const response = await axios.get('https://router.project-osrm.org/route/v1/driving/' +
+            //     `${pickup.coordinates[0]},${pickup.coordinates[1]};${destination.longitude},${destination.latitude}`, {
+            //     params: {
+            //         overview: 'false',
+            //         geometries: 'geojson'
+            //     }
+            // });
             const response = await axios.get('https://router.project-osrm.org/route/v1/driving/' +
-                `${pickup.coordinates[0]},${pickup.coordinates[1]};${destination.longitude},${destination.latitude}`, {
+                `${pickup.coordinates[0]},${pickup.coordinates[1]};${destination.coordinates[0]},${destination.coordinates[1]}`, {
                 params: {
                     overview: 'false',
                     geometries: 'geojson'
@@ -303,6 +310,26 @@ class RideService {
 
         } catch (exception) {
             console.log("deleteRideById exception : ", exception)
+            throw exception
+        }
+    }
+    getRecentRideLocation = async (userId) => {
+        try {
+            let filter = {
+                userId: userId,
+                status: "completed"
+            }
+            const response = await RideModel.find(filter)
+                .sort({ createdAt: -1 })
+                .limit(3)
+                .select("pickUpLocation dropOffLocation")
+            if (response.length === 0) {
+                return null
+            }
+            return response
+
+        } catch (exception) {
+            console.log("getRecentRideLocation exception : ", exception)
             throw exception
         }
     }
