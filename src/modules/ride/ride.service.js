@@ -5,18 +5,19 @@ const TransactionModel = require('./transactions/transaction.model');
 
 class RideService {
 
-    calculateFare = async (pickup, destination, vehicleType) => {
+    calculateFare = async (distance, time, vehicleType) => {
         try {
-            if (!pickup || !destination || !vehicleType) {
-                throw new Error('Invalid pickup, destination, or vehicle type');
+            if (!distance || !time || !vehicleType) {
+                throw new Error('Invalid distance, time, or vehicle type');
             }
-            const distanceTime = await this.calculateDistanceTime(pickup, destination);
+            // const distanceTime = await this.calculateDistanceTime(pickup, destination);
+
 
             let fare;
             if (vehicleType === 'car') {
-                fare = distanceTime.distance * 10 + distanceTime.time * 2; // Example fare calculation for car
+                fare = distance * 10 + time * 2; // Example fare calculation for car
             } else if (vehicleType === 'bike') {
-                fare = distanceTime.distance * 5 + distanceTime.time * 1; // Example fare calculation for bike
+                fare = distance * 5 + time * 1; // Example fare calculation for bike
             } else {
                 throw new Error('Unsupported vehicle type');
             }
@@ -48,20 +49,7 @@ class RideService {
     }
     calculateDistance = async (pickup, destination) => {
         try {
-            // const distance = geolib.getDistance(
-            //     { latitude: pickup.latitude, longitude: pickup.longitude },
-            //     { latitude: destination.latitude, longitude: destination.longitude }
-            // );
-            // console.log(distance)
-            // return { distance: distance / 1000 }; // Convert meters to kilometers
 
-            // const response = await axios.get('https://router.project-osrm.org/route/v1/driving/' +
-            //     `${pickup.coordinates[0]},${pickup.coordinates[1]};${destination.longitude},${destination.latitude}`, {
-            //     params: {
-            //         overview: 'false',
-            //         geometries: 'geojson'
-            //     }
-            // });
             const response = await axios.get('https://router.project-osrm.org/route/v1/driving/' +
                 `${pickup.coordinates[0]},${pickup.coordinates[1]};${destination.coordinates[0]},${destination.coordinates[1]}`, {
                 params: {
@@ -86,83 +74,21 @@ class RideService {
 
 
 
-    // calculateDistance = async (pickup, destination) => {
-    //     try {
-    //         const response = await axios.get(
-    //             `https://router.project-osrm.org/route/v1/driving/${pickup.longitude},${pickup.latitude};${destination.longitude},${destination.latitude}`,
-    //             {
-    //                 params: {
-    //                     overview: 'false',
-    //                     geometries: 'geojson'
-    //                 }
-    //             }
-    //         );
-
-    //         if (!response.data || !response.data.routes || response.data.routes.length === 0) {
-    //             throw new Error("OSRM API returned an invalid response for distance calculation.");
-    //         }
-
-    //         const distance = response.data.routes[0].distance; // Distance in meters
-    //         if (isNaN(distance) || distance <= 0) {
-    //             throw new Error("Invalid distance value received from API.");
-    //         }
-
-    //         console.log("Calculated Distance:", (distance / 1000).toFixed(2));
-    //         return { distance: parseFloat((distance / 1000).toFixed(2)) }; // Convert meters to km
-    //     } catch (exception) {
-    //         console.error("Error calculating distance:", exception.message);
-    //         throw exception;
-    //     }
-    // };
-    // calculateDistance = async (pickup, destination) => {
-    //     try {
-    //         const response = await axios.get(
-    //             `https://router.project-osrm.org/route/v1/driving/${pickup.longitude},${pickup.latitude};${destination.longitude},${destination.latitude}`,
-    //             { params: { overview: 'false', geometries: 'geojson' } }
-    //         );
-
-    //         if (!response.data || !response.data.routes || response.data.routes.length === 0) {
-    //             throw new Error("OSRM API returned an invalid response.");
-    //         }
-
-    //         const distance = response.data.routes[0].distance / 1000; // Convert meters to km
-    //         return { distance: parseFloat(distance.toFixed(2)) };
-    //     } catch (exception) {
-    //         console.error("OSRM failed, trying alternative API...", exception.message);
-
-    //         // Use Google Maps API as a fallback (requires an API key)
-    //         const googleMapsURL = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${pickup.latitude},${pickup.longitude}&destinations=${destination.latitude},${destination.longitude}&key=YOUR_GOOGLE_MAPS_API_KEY`;
-
-    //         try {
-    //             const googleResponse = await axios.get(googleMapsURL);
-    //             if (googleResponse.data && googleResponse.data.rows[0].elements[0].distance) {
-    //                 const distance = googleResponse.data.rows[0].elements[0].distance.value / 1000; // Convert meters to km
-    //                 return { distance: parseFloat(distance.toFixed(2)) };
-    //             } else {
-    //                 throw new Error("Google Maps API returned an invalid response.");
-    //             }
-    //         } catch (googleError) {
-    //             console.error("Google Maps API failed as well.", googleError.message);
-    //             throw new Error("Unable to fetch distance from any API.");
-    //         }
-    //     }
-    // };
-
-
     createRide = async (user, pickup, destination, vehicleType) => {
         try {
 
             const distanceTimeObj = await this.calculateDistanceTime(pickup, destination);
+
             const distanceTime = distanceTimeObj.time
 
             // if (isNaN(distanceTime.distance) || distanceTime.distance === undefined) {
             //     throw new Error("Invalid distance calculated. Cannot create ride.");
             // }
-            const distanceObject = await this.calculateDistance(pickup, destination);
-            const distance = distanceObject.distance;
+            // const distanceObject = await this.calculateDistance(pickup, destination);
+            const distance = distanceTimeObj.distance;
 
             // Ensure `fare` calculation does not result in NaN
-            const fare = isNaN(distance) ? 0 : await this.calculateFare(pickup, destination, vehicleType);
+            const fare = isNaN(distance) ? 0 : await this.calculateFare(distance, distanceTime, vehicleType);
 
             const ride = await RideModel.create({
                 userId: user,
@@ -180,29 +106,15 @@ class RideService {
             throw exception
         }
     }
-    //  haversineDistance = (coords1, coords2) => {
-    //     const toRad = (x) => x * Math.PI / 180
 
-    //     const R = 6371e3 // Earth's radius in meters
-    //     const dLat = toRad(coords2.latitude - coords1.latitude)
-    //     const dLon = toRad(coords2.longitude - coords1.longitude)
-
-    //     const lat1 = toRad(coords1.latitude)
-    //     const lat2 = toRad(coords2.latitude)
-
-    //     const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    //               Math.cos(lat1) * Math.cos(lat2) *
-    //               Math.sin(dLon/2) * Math.sin(dLon/2)
-
-    //     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    //     const d = R * c
-
-    //     return d // in meters
-    // }
 
     fetchRecentRides = async (riderLocation, vehicleType) => {
         try {
-            let filter = { vehicleType: vehicleType }
+            let filter = {
+                vehicleType: vehicleType,
+                RideStatus: 'pending'
+
+            }
 
 
             const response = await RideModel.find({
@@ -232,11 +144,12 @@ class RideService {
                 {
                     rider: riderDetails.id,
                     vehicleDetails: riderDetails.vehicle,
-                    status: "accepted"
+                    status: "accepted",
+                    RideStatus: "accepted"
 
                 },
                 { new: true })
-                .populate('rider', ["_id", "name", "email", "status"])
+                .populate('rider', ["_id", "name", "email", "status", 'image'])
             return response
 
         } catch (exception) {
@@ -250,8 +163,8 @@ class RideService {
             }, {
                 new: true
             })
-                .populate('rider', ["_id", "name", "email", "status"])
-                .populate('userId', ["_id", "name", "email", "status"])
+                .populate('rider', ["_id", "name", "email", "status", 'image'])
+                .populate('userId', ["_id", "name", "email", "status", 'image'])
             return response
 
         } catch (exception) {
@@ -262,6 +175,9 @@ class RideService {
     getSingleRideByFilter = async (filter) => {
         try {
             const rideDetail = await RideModel.findOne(filter)
+
+                .populate('rider', ["_id", "name", "email", "status", 'image', 'phone'])
+
             if (!rideDetail) {
                 throw { code: 400, message: "Ride Not found", status: "RIDE_NOT_FOUND" }
             }

@@ -6,9 +6,19 @@ class RideController {
     requestRide = async (req, res, next) => {
         try {
 
-            const { userId, pickUpLocation, dropOffLocation, vehicleType } = req.body
+            const userId = req.authUser.id
+            const { pickUpLocation, dropOffLocation, vehicleType } = req.body
             const ride = await rideSvc.createRide(userId, pickUpLocation, dropOffLocation, vehicleType)
 
+            if (!ride) {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_CREATE_FAILED",
+                    message: "Ride creation failed",
+                    options: null
+
+                })
+            }
             res.json({
 
                 detail: ride,
@@ -17,6 +27,7 @@ class RideController {
                 options: null
 
             })
+
 
 
 

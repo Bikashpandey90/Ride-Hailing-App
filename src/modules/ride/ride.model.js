@@ -31,6 +31,11 @@ const RideSchema = new mongoose.Schema({
         coordinates: {
             type: [Number], // [longitude, latitude]
             required: true
+        },
+        name: {
+            type: String,
+            required: true,
+            default: ""
         }
     },
     dropOffLocation: {
@@ -43,9 +48,14 @@ const RideSchema = new mongoose.Schema({
         coordinates: {
             type: [Number], // [longitude, latitude]
             required: true
+        },
+        name: {
+            type: String,
+            required: true,
+            default: ""
         }
     },
-    
+
     // dropOffLocation: {
     //     type: {
     //         latitude: Number,
@@ -63,7 +73,7 @@ const RideSchema = new mongoose.Schema({
         // required: true
         default: 0
     },
-    status: {
+    RideStatus: {
         type: String,
         enum: ['scheduled', 'pending', 'accepted', 'ongoing', 'completed', 'cancelled'],
         default: 'pending'

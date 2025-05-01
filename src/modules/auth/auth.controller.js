@@ -270,8 +270,41 @@ class AuthController {
             next(exception)
         }
     }
+    updateRiderStatus = async (req, res, next) => {
+        try {
+            const userId = req.authUser.id
+            const { status } = req.body
 
+            const userCheck = await authSvc.getSingleRiderByFilter(userId)
+
+            const response = await authSvc.updateRideStatus(userCheck._id, status)
+            if (!response) {
+                return res.json({
+                    detail: null,
+                    status: "ERROR_UPDATING_STATUS",
+                    message: "Rider status update error",
+                    options: null
+
+                })
+            }
+
+            res.json({
+                detail: response,
+                status: "RIDER_STATUS_UPDATED",
+                message: "Rider status updated successfully",
+                options: null
+            })
+
+        } catch (exception) {
+            {
+                next(exception)
+            }
+        }
+
+
+    }
 
 }
+
 const authCtrl = new AuthController();
 module.exports = authCtrl;

@@ -56,7 +56,7 @@ const checkLoginRider = async (req, res, next) => {
         }
         const user = await authSvc.getSingleRiderByFilter({ _id: data.sub })
         if (!user) {
-            throw { code: 401, message: "User not found", status: "USER_NOT_FOUND" }
+            throw { code: 401, message: "Rider not found", status: "RIDER_NOT_FOUND" }
         }
         req.authUser = {
             id: user._id,

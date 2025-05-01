@@ -82,12 +82,20 @@ const registerRiderDTO = Joi.object({
 
 
 })
+const UpdateRiderStatusDTO = Joi.object({
+    status: Joi.boolean().required().messages({
+        "boolean.base": "Status should be a boolean",
+        "any.required": "Status is required"
+    }),
+
+})
 
 
 module.exports = {
     registerDataDTO,
     loginDTO,
     activationDTO,
-    registerRiderDTO
+    registerRiderDTO,
+    UpdateRiderStatusDTO
 
 }

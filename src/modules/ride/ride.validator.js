@@ -8,10 +8,10 @@ const geoJSONPointSchema = Joi.object({
         )
         .length(2)
         .required()
+    , name: Joi.string().default("").required()
 });
 
 const RideRequestDTO = Joi.object({
-    userId: Joi.string().required(),
 
     // pickUpLocation: Joi.object({
     //     latitude: Joi.number().required(),
