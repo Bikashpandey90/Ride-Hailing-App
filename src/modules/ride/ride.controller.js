@@ -267,6 +267,99 @@ class RideController {
         }
     }
 
+    cancelRide = async (req, res, next) => {
+        try {
+            const rideId = req.params.id
+
+            const rideDetail = await rideSvc.getSingleRideByFilter({
+                _id: rideId
+            })
+            if (!rideDetail) {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_FOUND",
+                    message: "Ride not found",
+                    options: null
+
+                })
+            }
+
+            const userId = req.authUser.id
+            const userCheck = await authSvc.getSingleUserByFilter(userId)
+            if (!userCheck) {
+                return res.json({
+                    detail: null,
+                    status: "USER_NOT_FOUND",
+                    message: "User not found",
+                    options: null
+
+                })
+            }
+            if (rideDetail.userId && rideDetail.userId.toString() !== userCheck._id.toString()) {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_CANCELABLE",
+                    message: "Ride not cancelable",
+                    options: null
+
+                })
+
+            }
+
+            if (rideDetail.RideStatus === 'completed') {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_ALREADY_COMPLETED",
+                    message: "Ride already completed",
+                    options: null
+
+                })
+            }
+            if (rideDetail.RideStatus === 'cancelled') {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_ALREADY_CANCELLED",
+                    message: "Ride already cancelled",
+                    options: null
+
+                })
+            }
+            if (rideDetail.RideStatus === 'ongoing') {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_ONGOING",
+                    message: "Ride is ongoing",
+                    options: null
+
+                })
+            }
+            if (rideDetail.RideStatus !== 'accepted' && rideDetail.RideStatus !== 'pending') {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_CANCELABLE",
+                    message: "Ride is not cancelable",
+                    options: null
+
+                })
+            }
+
+
+
+            const response = await rideSvc.updateRideDetails(rideId, { RideStatus: 'cancelled' })
+            res.json({
+                detail: response,
+                status: "RIDE_CANCELLED",
+                message: "Ride cancelled successfully",
+                options: null
+
+            })
+
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+
 }
 const rideCtrl = new RideController()
 module.exports = rideCtrl
