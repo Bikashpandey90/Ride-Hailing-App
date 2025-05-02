@@ -249,6 +249,18 @@ class RideService {
             throw exception
         }
     }
+    getLocationName = async (lat, lng) => {
+        try {
+            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+
+            return response.data.display_name
+
+
+        } catch (exception) {
+            console.log("getLocationName exception : ", exception)
+            throw exception
+        }
+    }
 
 }
 const rideSvc = new RideService();
