@@ -44,10 +44,7 @@ class ReviewController {
     }
     getRiderReviews = async (req, res, next) => {
         try {
-
-
-
-            const riderId = req.body.riderId
+            const riderId = req.params.id
 
             const reviews = await reviewSvc.getRiderReviewsByFilter(riderId)
             const sumOfReviews = reviews.reduce((sum, review) => sum + review.rating, 0);
@@ -58,6 +55,22 @@ class ReviewController {
                 message: 'Reviews fetched successfully',
                 status: "REVIEW_FETCH_SUCCESS",
                 options: null
+            })
+
+        } catch (exception) {
+            next(exception);
+        }
+    }
+    getUserReviews = async (req, res, next) => {
+        try {
+            const userId = req.authUser.id
+            const reviews = await reviewSvc.getUserReviewsByFilter(userId)
+            res.json({
+                data: reviews,
+                message: 'Reviews fetched successfully',
+                status: "REVIEW_FETCH_SUCCESS",
+                options: null
+
             })
 
         } catch (exception) {

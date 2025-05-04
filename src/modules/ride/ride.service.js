@@ -139,6 +139,10 @@ class RideService {
     updateRideWithRider = async (rideId, riderDetails) => {
         try {
             console.log(riderDetails, "services")
+
+
+
+
             const response = await RideModel.findByIdAndUpdate(
                 rideId,
                 {
@@ -149,7 +153,8 @@ class RideService {
 
                 },
                 { new: true })
-                .populate('rider', ["_id", "name", "email", "status", 'image'])
+                .populate('rider', ["_id", "name", "email", "status", 'image', 'phone'])
+                .populate('userId', ["_id", "name", "email", "status", 'image', 'phone'])
             return response
 
         } catch (exception) {
@@ -159,7 +164,9 @@ class RideService {
     updateRideDetails = async (rideId, data) => {
         try {
             const response = await RideModel.findByIdAndUpdate(rideId, {
-                status: data.status
+                status: data.status,
+                RideStatus:data.RideStatus
+
             }, {
                 new: true
             })

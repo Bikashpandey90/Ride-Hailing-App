@@ -38,7 +38,8 @@ const fetchRecentRidesDTO = Joi.object({
 
 const RideStartDTO = Joi.object({
     rideId: Joi.string().required(),
-    status: Joi.string().valid("ongoing", "completed").required()
+    status: Joi.string().valid("ongoing", "completed").required(),
+    RideStatus: Joi.string().valid('ongoing', 'completed').required(),
 })
 const confirmRideDTO = Joi.object({
     rideId: Joi.string().required()

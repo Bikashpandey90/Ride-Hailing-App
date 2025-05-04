@@ -12,6 +12,8 @@ class RideController {
                 pickUpLocation.name = await rideSvc.getLocationName(pickUpLocation.coordinates[1], pickUpLocation.coordinates[0])
             }
 
+
+
             const ride = await rideSvc.createRide(userId, pickUpLocation, dropOffLocation, vehicleType)
 
             if (!ride) {
@@ -67,6 +69,41 @@ class RideController {
             const rideId = req.body.rideId; // Correctly assign rideId
             const riderDetails = req.authUser;
             console.log(riderDetails);
+            const rideCheck = await rideSvc.getSingleRideByFilter({
+                _id: rideId
+            })
+
+            if (!rideCheck) {
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_FOUND",
+                    message: "Ride not found",
+                    options: null
+
+                })
+
+            }
+            if (rideCheck.RideStatus === 'accepted' && rideCheck?.rider === riderDetails.id.toString()) {
+
+                return res.json({
+                    detail: null,
+                    status: "RIDE_ALREADY_ACCEPTED",
+                    message: "Ride is already accepted by you",
+                    options: null
+
+                })
+            }
+            if (rideCheck.RideStatus === 'accepted' && rideCheck?.rider !== riderDetails.id.toString()) {
+
+                return res.json({
+                    detail: null,
+                    status: "RIDE_NOT_AVAILABLE",
+                    message: "Ride is already accepted by others",
+                    options: null
+
+                })
+            }
+
             const ride = await rideSvc.updateRideWithRider(rideId, riderDetails);
 
             res.json({
@@ -122,7 +159,7 @@ class RideController {
                 rideId: rideDetail._id,
                 amount: data.amount,
                 paymentMethod: data.paymentMethod || 'cash',
-                transctionCode: data.transctionCode || Date.now(),
+                transactionCode: data.transactionCode || Date.now(),
                 data: data.data || null
             }
             const transaction = await rideSvc.populateTransation(transactionObj)
@@ -151,12 +188,34 @@ class RideController {
         try {
             const rideId = req.params.id
 
+            const userId = req.authUser.id
+
+
+
+
+
+
             const rideDetail = await rideSvc.getSingleRideByFilter({
                 _id: rideId
             })
 
 
+
+
+
             //manage user handling user and rider should be allowed to see their rides only
+
+            //check this one and done
+
+            // if (rideDetail.userId !== userId.toString() || rideDetail.rider !== userId.toString()) {
+            //     return res.json({
+            //         details: null,
+            //         status: "USER_UNAUTHORIZED",
+            //         messages: "You cannot view other ride",
+            //         options: null
+
+            //     })
+            // }
 
 
             if (!rideDetail) {
@@ -354,6 +413,16 @@ class RideController {
 
             })
 
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+
+
+    getMyRides = async (req, res, next) => {
+        try {
+            //todo
 
         } catch (exception) {
             next(exception)

@@ -13,6 +13,8 @@ rideRouter.patch('/update-ride-status', checkLoginRider, bodyValidator(RideStart
 rideRouter.post('/payment/:id', checkLogin, allowedRoles(['admin', 'customer']), bodyValidator(PaymentDTO), rideCtrl.makePayment)
 rideRouter.get('/recent-ride-locations', checkLogin, allowedRoles(['admin', 'customer']), rideCtrl.getRecentRideLocations)
 
+rideRouter.get('/my-rides', checkLogin, rideCtrl.getMyRides)
+
 rideRouter.patch('/cancel-ride/:id', checkLogin, allowedRoles(['admin', 'customer']), rideCtrl.cancelRide)
 
 rideRouter.route('/:id')

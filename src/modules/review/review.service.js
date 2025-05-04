@@ -35,14 +35,27 @@ class ReviewService {
     }
     getRiderReviewsByFilter = async (riderId) => {
         try {
-            const filter={
-                rider:riderId
+            const filter = {
+                rider: riderId
             }
             const response = await Review.find(filter)
             return response
 
         } catch (exception) {
             console.log("Get Rider Reviews By Filter Exceptioon : ", exception);
+            throw exception
+        }
+    }
+    getUserReviewsByFilter = async (userId) => {
+        try {
+            const filter = {
+                user: userId
+            }
+            const response = await Review.find(filter)
+            return response
+
+        } catch (exception) {
+            console.log("Get User Reviews By Filter Exceptioon : ", exception);
             throw exception
         }
     }
