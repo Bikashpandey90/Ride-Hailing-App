@@ -5,21 +5,21 @@ class ChatController {
     listAllUsers = async (req, res, next) => {
         try {
 
-            const loggedInUser = req.authUser
+
+            const loggedInUser = req.authUser;
             let chatUsers;
             if (loggedInUser.role === 'admin') {
                 chatUsers = await authSvc.getAllUsers({
-                    _id: { $ne: loggedInUser._id }
-
+                    _id: { $ne: loggedInUser.id }
                 })
             } else {
-                let withwhomIamChatting = await chatSvc.listAllChatsByUserId(loggedInUser._id)
-                let chatUsersId = withwhomIamChatting.filter((user) => !user.equals(loggedInUser._id))
+
+
+                let withwhomIamChatting = await chatSvc.listAllChatsByUserId(loggedInUser.id)
+                let chatUsersId = withwhomIamChatting.filter((user) => !user.equals(loggedInUser.id))
                 chatUsers = await authSvc.getAllUsers({
                     _id: { $in: chatUsersId }
                 })
-
-
             }
             res.json({
                 data: chatUsers,
@@ -37,7 +37,8 @@ class ChatController {
     getAllChats = async (req, res, next) => {
         try {
             const receiverId = req.params.receiverId;
-            const senderId = req.authUser._id
+           
+            const senderId = req.authUser.id;
 
             const allChatList = await chatSvc.listAllChats(senderId, receiverId)
 
@@ -54,10 +55,20 @@ class ChatController {
     }
     createChat = async (req, res, next) => {
         try {
-            let loggedInUser = req.authUser._id
+            let loggedInUser = req.authUser.id
+
+            let senderType
+
+            if (req.authUser.role === 'customer' || req.authUser.role === 'admin') {
+                senderType = 'User'
+            } else {
+                senderType = 'Rider'
+            }
+
+
             let message = {
                 sender: loggedInUser,
-                senderType: req.body.senderType,
+                senderType: senderType,
                 receiver: req.body.receiver,
                 receiverType: req.body.receiverType,
                 message: req.body.message,

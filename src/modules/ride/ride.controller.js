@@ -422,6 +422,28 @@ class RideController {
 
     getMyRides = async (req, res, next) => {
         try {
+            const userId = req.authUser.id
+            const status = req.body.status || 'completed'
+
+            const rides = await rideSvc.fetchUsersRecentRides(userId, status)
+
+            
+
+            if (!rides) {
+                return res.json({
+                    detail: null,
+                    status: "NO_RIDES",
+                    message: "No rides found",
+                    options: null
+                })
+            }
+
+            res.json({
+                detail: rides,
+                status: "RIDE_FETCHED",
+                message: "Rides fetched successfully",
+                options: null
+            })
             //todo
 
         } catch (exception) {

@@ -52,6 +52,10 @@ class ReviewService {
                 user: userId
             }
             const response = await Review.find(filter)
+                .populate('ride', ['pickUpLocation', 'dropOffLocation', 'fare', 'distance'])
+                .populate('rider', ["_id", "name", "email", 'image'])
+
+
             return response
 
         } catch (exception) {

@@ -29,7 +29,7 @@ class ChatService {
             const chatList = await ChatModel.find({
                 $or: [
                     { sender: senderId, receiver: receiverId },
-                    { receiver: senderId, sender: senderId }
+                    { receiver: senderId, sender: receiverId }
                 ]
             })
             return chatList

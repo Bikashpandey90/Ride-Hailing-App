@@ -165,7 +165,7 @@ class RideService {
         try {
             const response = await RideModel.findByIdAndUpdate(rideId, {
                 status: data.status,
-                RideStatus:data.RideStatus
+                RideStatus: data.RideStatus
 
             }, {
                 new: true
@@ -265,6 +265,24 @@ class RideService {
 
         } catch (exception) {
             console.log("getLocationName exception : ", exception)
+            throw exception
+        }
+    }
+
+    fetchUsersRecentRides = async (userId, status) => {
+        try {
+            let filter = {
+                userId: userId,
+                RideStatus: status
+            }
+
+            const response = await RideModel.find(filter)
+                .populate('rider', ['name', 'email', 'image'])
+                .sort({ createdAt: -1 })
+            return response
+
+        } catch (exception) {
+            console.log("fetchUsersRecentRides exception : ", exception)
             throw exception
         }
     }

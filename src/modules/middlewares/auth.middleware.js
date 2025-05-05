@@ -74,13 +74,80 @@ const checkLoginRider = async (req, res, next) => {
     } catch (exception) {
         if (exception.name === 'TokenExpiredError') {
             next({ code: 401, message: "Token Expired", status: "TOKEN_EXPIRED" })
+            return res.json({
+                message: "Token Expired",
+                status: "TOKEN_EXPIRED",
+                options: null,
+            })
+
         } else if (exception.name === 'JsonWebTokenWebError') {
             next({ code: 401, message: exception.message, status: "TOKEN_ERROR" })
+
+            return res.json({
+                message: exception.message,
+                status: "TOKEN_ERROR"
+
+            })
         }
         next(exception)
     }
+
 }
+// const checkLoginEither = async (req, res, next) => {
+//     let called = false
+
+//     const nextOnce = (err) => {
+//         if (!called) {
+//             called = true
+//             err ? next(err) : next()
+//         }
+//     }
+
+//     // Try both middlewares
+//     try {
+//         await checkLogin(req, res, nextOnce)
+//     } catch (e) {
+//         console.log(e)
+//     }
+
+//     try {
+//         await checkLoginRider(req, res, nextOnce)
+//     } catch (e) {
+//         console.log(e)
+//     }
+
+//     if (!called) {
+//         res.status(401).json({ message: 'Unauthorized' })
+//     }
+// }
+const checkLoginEither = async (req, res, next) => {
+    const promisifyMiddleware = (middleware) => {
+        return new Promise((resolve, reject) => {
+            middleware(req, res, (err) => {
+                if (err) return reject(err);
+                resolve(true);
+            });
+        });
+    };
+
+    try {
+        await promisifyMiddleware(checkLogin);
+        return next(); // If checkLogin succeeded, we're done.
+    } catch (e) {
+        // CheckLogin failed — proceed to try checkLoginRider
+    }
+
+    try {
+        await promisifyMiddleware(checkLoginRider);
+        return next(); // If checkLoginRider succeeded, we're done.
+    } catch (e) {
+        // Both failed
+    }
+
+    return res.status(401).json({ message: 'Unauthorized' });
+};
 module.exports = {
     checkLogin,
-    checkLoginRider
+    checkLoginRider,
+    checkLoginEither
 }
