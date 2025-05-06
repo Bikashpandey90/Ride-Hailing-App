@@ -54,6 +54,9 @@ class ReviewService {
             const response = await Review.find(filter)
                 .populate('ride', ['pickUpLocation', 'dropOffLocation', 'fare', 'distance'])
                 .populate('rider', ["_id", "name", "email", 'image'])
+                .sort({
+                    createdAt: -1
+                })
 
 
             return response

@@ -129,7 +129,7 @@ class RideService {
                     }
                 }
 
-            }).populate('userId', ["_id", "name", "email", "status", "image"])
+            }).populate('userId', ["_id", "name", "email", "status", "image", 'phone'])
             return response
 
         } catch (exception) {
