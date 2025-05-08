@@ -5,7 +5,7 @@ class MiscController {
 
     saveAddress = async (req, res, next) => {
         try {
-            const { locationName, location, isDefault, status, title } = req.body
+            const { locationName, location, isDefault, status = 'active', title } = req.body
 
             const userId = req.authUser.id
             console.log("userId : ", userId)
@@ -177,7 +177,7 @@ class MiscController {
         }
     }
 
-    updateSavedAddress = (req, res, next) => {
+    updateSavedAddress = async (req, res, next) => {
         try {
 
             //todo: update saved address
@@ -185,18 +185,54 @@ class MiscController {
 
             // const savedAddressId = req.params.id
 
+            const { title } = req.body
+            const savedAddressId = req.params.id
 
+            const userId = req.authUser.id
 
+            const Address = await miscSvc.getSavedAddressById(savedAddressId)
+            if (Address.userId.toString() !== userId.toString()) {
+                return res.json({
+                    detail: null,
+                    status: "INVALID_USER",
+                    message: "User not found",
+                    options: null
 
+                })
+            }
+
+            if (!Address) {
+                return res.json({
+                    detail: null,
+                    status: "ADDRESS_NOT_FOUND",
+                    message: "Address not found",
+                    options: null
+
+                })
+            }
+            const response = await miscSvc.updateSavedAddressById(savedAddressId, title)
+
+            if (!response) {
+                return res.json({
+                    detail: null,
+                    status: "ADDRESS_NOT_FOUND",
+                    message: "Address not found",
+                    options: null
+
+                })
+            }
+            return res.json({
+                detail: response,
+                status: "ADDRESS_UPDATED",
+                message: "Address updated successfully",
+                options: null
+
+            })
 
         } catch (exception) {
             next(exception)
         }
     }
-
-
-
-
 }
 
 const miscCtrl = new MiscController();

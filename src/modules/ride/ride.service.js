@@ -244,11 +244,14 @@ class RideService {
             }
             const response = await RideModel.find(filter)
                 .sort({ createdAt: -1 })
-                .limit(3)
+                .limit(10)
+                // .distinct('dropOffLocation pickUpLocation')
                 .select("pickUpLocation dropOffLocation")
             if (response.length === 0) {
                 return null
             }
+
+
             return response
 
         } catch (exception) {

@@ -12,7 +12,8 @@ class MiscServices {
                 location: location,
                 isDefault: isDefault,
                 status: status,
-                title: title
+                title: title,
+
             })
 
             await saveAddress.save()
@@ -74,6 +75,17 @@ class MiscServices {
         } catch (exception) {
             console.log("deleteSavedAddressById exception : ", exception)
             throw exception
+        }
+    }
+    updateSavedAddressById = async (savedAddressId, data) => {
+        try {
+            const response = await SavedLocationModel.findByIdAndUpdate(savedAddressId, { $set: data }, { new: true })
+            return response
+
+        } catch (exception) {
+            console.log("updateSavedAddressById exception : ", exception)
+            throw exception
+
         }
     }
 

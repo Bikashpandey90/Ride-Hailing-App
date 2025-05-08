@@ -75,11 +75,7 @@ class ReviewService {
 
             if (!data) {
                 throw { code: 404, message: "Review not found", status: "NOT_FOUND" }
-
-
             }
-
-
             return data
 
         } catch (exception) {
