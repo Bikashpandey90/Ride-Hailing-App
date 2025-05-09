@@ -210,7 +210,7 @@ class MiscController {
 
                 })
             }
-            const response = await miscSvc.updateSavedAddressById(savedAddressId, title)
+            const response = await miscSvc.updateSavedAddressById(savedAddressId, { title })
 
             if (!response) {
                 return res.json({

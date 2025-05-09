@@ -182,8 +182,9 @@ class RideService {
     getSingleRideByFilter = async (filter) => {
         try {
             const rideDetail = await RideModel.findOne(filter)
-
                 .populate('rider', ["_id", "name", "email", "status", 'image', 'phone'])
+                .populate('userId', ["_id", "name", "email", "status", 'image', 'phone'])
+
 
             if (!rideDetail) {
                 throw { code: 400, message: "Ride Not found", status: "RIDE_NOT_FOUND" }
@@ -244,7 +245,7 @@ class RideService {
             }
             const response = await RideModel.find(filter)
                 .sort({ createdAt: -1 })
-                .limit(10)
+                .limit(3)
                 // .distinct('dropOffLocation pickUpLocation')
                 .select("pickUpLocation dropOffLocation")
             if (response.length === 0) {

@@ -12,6 +12,4 @@ miscRouter.route('/:id')
     .delete(checkLogin, allowedRoles(['admin','customer']), miscCtrl.deleteSavedAddress)
     .patch(checkLogin, allowedRoles(['admin', 'customer']), miscCtrl.updateSavedAddress)
 
-
-
 module.exports = miscRouter;

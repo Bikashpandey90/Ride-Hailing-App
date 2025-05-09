@@ -22,8 +22,4 @@ rideRouter.route('/:id')
     .delete(checkLogin, allowedRoles(['admin']), rideCtrl.deleteRide)
     .patch(checkLogin, allowedRoles(['admin']), rideCtrl.updateRide)
 
-
-
-
-
 module.exports = rideRouter

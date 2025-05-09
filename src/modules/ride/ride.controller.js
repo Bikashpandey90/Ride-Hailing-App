@@ -190,11 +190,6 @@ class RideController {
 
             const userId = req.authUser.id
 
-
-
-
-
-
             const rideDetail = await rideSvc.getSingleRideByFilter({
                 _id: rideId
             })
