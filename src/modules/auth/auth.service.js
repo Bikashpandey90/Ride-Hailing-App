@@ -155,7 +155,7 @@ class AuthService {
     getSingleRiderByFilter = async (filter) => {
         try {
             console.log("Filter for Rider Search:", filter); // Debugging
-            const user = await RiderModel.findOne( filter )
+            const user = await RiderModel.findOne(filter)
             if (!user) {
                 throw { code: 422, message: "Rider not found", status: "RIDer_NOT_FOUND" }
             }
@@ -196,8 +196,7 @@ class AuthService {
                 otp: 0,
                 otpExpiryTime: 0,
                 _v: 0,
-                createdAt: 0,
-                updatedAt: 0
+
 
             }).sort({
                 createdAt: "desc"
@@ -208,8 +207,6 @@ class AuthService {
                 otp: 0,
                 otpExpiryTime: 0,
                 _v: 0,
-                createdAt: 0,
-                updatedAt: 0,
                 nid: 0,
                 license: 0,
                 vehicle: 0,
@@ -227,6 +224,28 @@ class AuthService {
             throw exception
         }
 
+    }
+    getAllRiders = async () => {
+        try {
+            let filter = {
+
+            }
+            const riders = await RiderModel.find(filter, {
+                password: 0,
+                otp: 0,
+                otpExpiryTime: 0,
+                _v: 0,
+            }).sort({
+                createdAt: "desc"
+
+            })
+
+
+            return riders
+
+        } catch (exception) {
+            throw exception
+        }
     }
     updateMyLocation = async (userId, location) => {
         try {

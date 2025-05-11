@@ -63,8 +63,22 @@ class ReviewController {
     }
     getUserReviews = async (req, res, next) => {
         try {
-            const userId = req.authUser.id
-            const reviews = await reviewSvc.getUserReviewsByFilter(userId)
+            const user = req.authUser
+            let filter = {}
+            if (user.role === 'customer') {
+                filter = {
+                    user: user._id
+                }
+            }
+            if (user.role === 'rider') {
+                filter = {
+                    user: user._id
+                }
+            }
+
+
+            const reviews = await reviewSvc.getUserReviewsByFilter(filter)
+
             res.json({
                 data: reviews,
                 message: 'Reviews fetched successfully',

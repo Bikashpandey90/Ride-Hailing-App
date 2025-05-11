@@ -1,6 +1,7 @@
 const RideModel = require('./ride.model');
-const axios = require('axios');
 const TransactionModel = require('./transactions/transaction.model');
+const axios = require('axios');
+
 
 
 class RideService {
@@ -22,7 +23,7 @@ class RideService {
                 throw new Error('Unsupported vehicle type');
             }
 
-            return fare;
+            return fare.toFixed(2);
         } catch (exception) {
             throw exception;
         }
@@ -273,20 +274,36 @@ class RideService {
         }
     }
 
-    fetchUsersRecentRides = async (userId, status) => {
+    fetchUsersRecentRides = async (filter) => {
         try {
-            let filter = {
-                userId: userId,
-                RideStatus: status
-            }
+
 
             const response = await RideModel.find(filter)
                 .populate('rider', ['name', 'email', 'image'])
+                .populate('userId', ['name', 'email', 'image'])
                 .sort({ createdAt: -1 })
             return response
 
         } catch (exception) {
             console.log("fetchUsersRecentRides exception : ", exception)
+            throw exception
+        }
+    }
+    getAllPayments = async (filter) => {
+        try {
+            const response = await TransactionModel.find(filter)
+                .populate({
+                    path: 'rideId',
+                    select: ['dropOffLocation', 'pickUpLocation', 'fare'],
+                    populate: [
+                        { path: 'userId', select: ['name', 'image', 'email', 'phone', 'role'] },
+                        { path: 'rider', select: ['name', 'image', 'email', 'phone', 'role'] }
+                    ]
+                });
+            return response
+
+        } catch (exception) {
+            console.log("getAllPayments exception : ", exception)
             throw exception
         }
     }

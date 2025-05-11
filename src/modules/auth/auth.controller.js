@@ -157,7 +157,7 @@ class AuthController {
                     options: null
                 })
             } else {
-                throw { code: 401, message: "Invalid credentials", status: "INVALID_CREDENTIALS" }
+                return { code: 401, message: "Invalid credentials", status: "INVALID_CREDENTIALS" }
             }
         } catch (exception) {
             console.log("Login", exception)
@@ -302,6 +302,22 @@ class AuthController {
         }
 
 
+    }
+    listAllRiders = async (req, res, next) => {
+        try {
+            const response = await authSvc.getAllRiders()
+
+            res.json({
+                detail: response,
+                status: "RIDERS_LISTED",
+                message: "Riders listed successfully",
+                options: null
+
+            })
+
+        } catch (exception) {
+            next(exception)
+        }
     }
 
 }

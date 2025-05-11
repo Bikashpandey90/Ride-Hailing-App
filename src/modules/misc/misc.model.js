@@ -31,7 +31,7 @@ const SavedLocationsSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        enum: ['home', 'work', 'recent'],
+        enum: ['home', 'work', 'recent', 'other'],
         required: true
     },
     ...commonStr

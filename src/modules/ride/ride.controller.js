@@ -420,9 +420,19 @@ class RideController {
             const userId = req.authUser.id
             const status = req.body.status || 'completed'
 
-            const rides = await rideSvc.fetchUsersRecentRides(userId, status)
+            let filter = {
 
-            
+            }
+            if (req.authUser.role === 'customer' && req.authUser.role === 'rider') {
+                filter = {
+                    userId: userId,
+                    RideStatus: status
+                }
+            }
+
+            const rides = await rideSvc.fetchUsersRecentRides(filter)
+
+
 
             if (!rides) {
                 return res.json({
@@ -440,6 +450,38 @@ class RideController {
                 options: null
             })
             //todo
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    listAllPayments = async (req, res, next) => {
+        try {
+            const userId = req.authUser.id
+            let filter = {}
+
+            if (req.authUser.role === 'customer') {
+                filter = {
+                }
+            }
+
+            const response = await rideSvc.getAllPayments(filter)
+            if (!response) {
+                return res.json({
+                    detail: null,
+                    status: "NO_PAYMENTS",
+                    message: "No payments found",
+                    options: null
+                })
+            }
+
+            res.json({
+                detail: response,
+                status: "PAYMENT_LISTED",
+                message: "Payments listed successfully",
+                options: null
+            })
+
 
         } catch (exception) {
             next(exception)

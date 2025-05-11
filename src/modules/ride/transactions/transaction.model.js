@@ -29,6 +29,10 @@ const TransactionSchema = mongoose.Schema({
     },
     ...commonStr
 
+}, {
+    timestamps: true,
+    autoCreate: true,
+    autoIndex: true
 })
 const TransactionModel = mongoose.model("Transaction", TransactionSchema);
 module.exports = TransactionModel

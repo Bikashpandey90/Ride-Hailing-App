@@ -2,24 +2,22 @@ const OfferModel = require("./offer.model");
 
 class OfferServices {
     createOfferCode = async (
-        offerCode,
-        description,
-        discountAmount,
-        expiryTime,
-        discountType,
-        minAmount,
-        status
+        code, description, discountType, discountValue, maxDiscount, minRideAmount, usageLimit, expiryDate, startDate, title,createdBy
     ) => {
         try {
             const offer = await OfferModel.create({
-                offerCode: offerCode,
+                code: code,
                 description: description,
-                discountAmount: discountAmount,
-                expiryTime: expiryTime,
                 discountType: discountType,
-                minAmount: minAmount,
-                status: status,
-
+                discountValue: discountValue,
+                maxDiscount: maxDiscount,
+                minRideAmount: minRideAmount,
+                usageLimit: usageLimit,
+                expiryDate: expiryDate,
+                status: 'active',
+                startDate: startDate,
+                title: title,
+                createdBy: createdBy
             })
 
             return offer
@@ -33,7 +31,7 @@ class OfferServices {
     checkOfferCode = async (offerCode) => {
         try {
             const response = await OfferModel.findOne({
-                offerCode: offerCode
+                code: offerCode
             })
             if (response) {
                 return false
@@ -93,7 +91,7 @@ class OfferServices {
             throw exception
         }
     }
-    updateOfferCode = async (offerCode,description,discountAmount,expiryTime,discountType,minAmount,status) => {
+    updateOfferCode = async (offerCode, description, discountAmount, expiryTime, discountType, minAmount, status) => {
         try {
             const response = await OfferModel.findOneAndUpdate({
                 offerCode: offerCode

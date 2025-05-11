@@ -4,10 +4,12 @@ class OfferController {
 
     createOffer = async (req, res, next) => {
         try {
-            const { couponCode, description, discountAmount, expiryTime } = req.body
-            const isUnique = await this.checkOfferCodeUniqueness(couponCode)
+            const { code, description, discountType, discountValue, maxDiscount, minRideAmount, usageLimit, expiryDate, startDate, title } = req.body
+            const isUnique = await offerSvc.checkOfferCode(code)
+            const createdBy = req.authUser.id
 
             if (!isUnique) {
+                console.log("No is unique")
                 return res.status(400).json({
                     message: "Offer code already exists",
                     status: "OFFER_CODE_NOT_UNIQUE",
@@ -15,7 +17,15 @@ class OfferController {
                 })
             }
 
-            const offer = await offerSvc.createOfferCode({ couponCode, description, discountAmount, expiryTime })
+            if (isUnique === false) {
+                return res.status(400).json({
+                    message: "Offer code already exists",
+                    status: "OFFER_CODE_NOT_UNIQUE",
+                    options: null
+                })
+            }
+
+            const offer = await offerSvc.createOfferCode(code, description, discountType, discountValue, maxDiscount, minRideAmount, usageLimit, expiryDate, startDate, title, createdBy)
             res.json({
                 detail: offer,
                 message: "Offer created successfully",
@@ -48,6 +58,7 @@ class OfferController {
                     options: null
                 })
             }
+
         } catch (exception) {
             next(exception)
         }
@@ -153,7 +164,7 @@ class OfferController {
             next(exception)
         }
     }
-    
+
 
 
 

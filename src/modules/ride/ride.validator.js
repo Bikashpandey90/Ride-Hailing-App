@@ -46,7 +46,7 @@ const confirmRideDTO = Joi.object({
 
 })
 const PaymentDTO = Joi.object({
-    method: Joi.string().regex(/^(esewa|khalti|connectips|bank|cash|other)$/).default('cash'),
+    paymentMethod: Joi.string().regex(/^(esewa|khalti|connectips|bank|cash|other)$/).default('cash'),
     amount: Joi.number().min(20).required(),
     transactionCode: Joi.string().allow(null, '').default(null),
     data: Joi.any()

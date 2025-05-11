@@ -46,14 +46,13 @@ class ReviewService {
             throw exception
         }
     }
-    getUserReviewsByFilter = async (userId) => {
+    getUserReviewsByFilter = async (filter) => {
         try {
-            const filter = {
-                user: userId
-            }
+
             const response = await Review.find(filter)
                 .populate('ride', ['pickUpLocation', 'dropOffLocation', 'fare', 'distance'])
-                .populate('rider', ["_id", "name", "email", 'image'])
+                .populate('rider', ["_id", "name", "email", 'image', 'role'])
+                .populate('user', ["_id", "name", "email", "image", 'role'])
                 .sort({
                     createdAt: -1
                 })

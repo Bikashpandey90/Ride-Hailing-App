@@ -4,6 +4,7 @@ const { checkLogin, checkLoginRider } = require('../middlewares/auth.middleware'
 const bodyValidator = require('../middlewares/bodyvalidator.middleware');
 const uploader = require('../middlewares/multipart-parser.midlleware');
 const authCtrl = require('./auth.controller');
+const { allowedRoles } = require('../middlewares/rbac.middleware')
 const { registerDataDTO, loginDTO, activationDTO, registerRiderDTO, UpdateRiderStatusDTO } = require('./auth.validator');
 
 
@@ -21,6 +22,7 @@ authRouter.post('/login-rider', bodyValidator(loginDTO), authCtrl.loginRider)
 authRouter.get('/me-rider', checkLoginRider, authCtrl.getLoggedInUser)
 authRouter.patch('/update-location-rider', checkLoginRider, authCtrl.updateLocation)  //todo:validation
 authRouter.patch('/update-ride-status-rider', checkLoginRider, bodyValidator(UpdateRiderStatusDTO), authCtrl.updateRiderStatus)  //todo:validation
+authRouter.get('/list-riders', checkLogin, allowedRoles('admin'), authCtrl.listAllRiders)
 
 
 
