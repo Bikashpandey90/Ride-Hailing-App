@@ -225,6 +225,33 @@ class AuthService {
         }
 
     }
+    getSingleUserById = async (id) => {
+        try {
+            const user = await UserModel.findById(id, {
+                password: 0,
+                otp: 0,
+                otpExpiryTime: 0,
+                _v: 0,
+            })
+            return user;
+        } catch (exception) {
+            throw exception
+        }
+    }
+    getSingleRiderById = async (id) => {
+        try {
+            const rider = await RiderModel.findById(id, {
+                password: 0,
+                otp: 0,
+                otpExpiryTime: 0,
+                _v: 0,
+            })
+            return rider;
+
+        } catch (exception) {
+            throw exception
+        }
+    }
     getAllRiders = async () => {
         try {
             let filter = {
@@ -239,6 +266,7 @@ class AuthService {
                 createdAt: "desc"
 
             })
+
 
 
             return riders

@@ -307,6 +307,25 @@ class RideService {
             throw exception
         }
     }
+    paymentDetail = async (id) => {
+        try {
+            const response = await TransactionModel.findOne({ id })
+                .populate({
+                    path: 'rideId',
+                    select: ['dropOffLocation', 'pickUpLocation', 'fare', 'distance', 'distanceTime', 'createdAt', 'updatedAt'],
+                    populate: [
+                        { path: 'userId', select: ['name', 'image', 'email', 'phone', 'role', 'createdAt'] },
+                        { path: 'rider', select: ['name', 'image', 'email', 'phone', 'role', 'createdAt'] }
+                    ]
+                });
+            return response
+
+        } catch (exception) {
+            console.log("getAllPayments exception : ", exception)
+            throw exception
+        }
+    }
+
 
 }
 const rideSvc = new RideService();

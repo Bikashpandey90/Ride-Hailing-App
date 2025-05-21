@@ -2,6 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const authSvc = require("./auth.service");
 const jwt = require("jsonwebtoken");
+const reviewSvc = require("../review/review.service");
 
 class AuthController {
 
@@ -313,6 +314,41 @@ class AuthController {
                 message: "Riders listed successfully",
                 options: null
 
+            })
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    getUserDetails = async (req, res, next) => {
+        try {
+            const id = req.params.id
+            const response = await authSvc.getSingleUserById(id)
+            res.json({
+                detail: response,
+                status: "USER_DETAILS_FETCHED",
+                message: "User details fetched successfully",
+                options: null
+            })
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    getRiderDetail = async (req, res, next) => {
+        try {
+            const id = req.params.id
+            const response = await authSvc.getSingleRiderById(id)
+            const reviews = await reviewSvc.getRiderReviewsByFilter({ _id: id })
+            const sumOfReviews = reviews.reduce((sum, review) => sum + review.rating, 0);
+            const averageReview = reviews.length > 0 ? sumOfReviews / reviews.length : 0;
+
+            res.json({
+                detail: response,
+                review: averageReview,
+                status: "RIDER_DETAILS_FETCHED",
+                message: "Rider details fetched successfully",
+                options: null
             })
 
         } catch (exception) {

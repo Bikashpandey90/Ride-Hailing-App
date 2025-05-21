@@ -16,6 +16,8 @@ rideRouter.get('/my-rides', checkLogin, rideCtrl.getMyRides)
 
 
 rideRouter.get('/list-payments', checkLogin, allowedRoles(['admin']), rideCtrl.listAllPayments)
+rideRouter.get('/payment/detail/:id', checkLogin, allowedRoles(['admin', 'customer']), rideCtrl.getPaymentDetail)
+
 rideRouter.post('/payment/:id', checkLogin, allowedRoles(['admin', 'customer']), bodyValidator(PaymentDTO), rideCtrl.makePayment)
 
 

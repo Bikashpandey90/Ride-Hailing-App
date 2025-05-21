@@ -487,6 +487,36 @@ class RideController {
             next(exception)
         }
     }
+    getPaymentDetail = async (req, res, next) => {
+        try {
+            const paymentId = req.params.id
+            const user = req.authUser
+
+            const response = await rideSvc.paymentDetail()
+
+            if (user.role === 'customer') {
+                if (user.id !== response.rideId.userId._id) {
+                    return res.json({
+                        detail: null,
+                        status: "PAYMENT_NOT_FOUND",
+                        message: "Payment not found",
+                        options: null
+                    })
+                }
+            }
+
+            res.json({
+                detail: response,
+                status: "PAYMENT_DETAIL",
+                message: "Payment details listed successfully",
+                options: null
+
+            })
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
 
 }
 const rideCtrl = new RideController()
