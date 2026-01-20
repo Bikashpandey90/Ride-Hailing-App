@@ -81,14 +81,7 @@ class RideService {
             const distanceTimeObj = await this.calculateDistanceTime(pickup, destination);
 
             const distanceTime = distanceTimeObj.time
-
-            // if (isNaN(distanceTime.distance) || distanceTime.distance === undefined) {
-            //     throw new Error("Invalid distance calculated. Cannot create ride.");
-            // }
-            // const distanceObject = await this.calculateDistance(pickup, destination);
             const distance = distanceTimeObj.distance;
-
-            // Ensure `fare` calculation does not result in NaN
             const fare = isNaN(distance) ? 0 : await this.calculateFare(distance, distanceTime, vehicleType);
 
             const ride = await RideModel.create({
@@ -263,8 +256,22 @@ class RideService {
     }
     getLocationName = async (lat, lng) => {
         try {
-            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-
+            // const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+            const response = await axios.get(
+                "https://nominatim.openstreetmap.org/reverse",
+                {
+                    params: {
+                        lat,
+                        lon: lng,
+                        format: "json",
+                    },
+                    headers: {
+                        "User-Agent": "RideHailingApp/1.0 (contact: bikashpandey112.com.np)",
+                        "Accept": "application/json",
+                    },
+                    timeout: 5000,
+                }
+            );
             return response.data.display_name
 
 

@@ -11,11 +11,7 @@ class RideController {
             if (pickUpLocation.name === 'Current Location') {
                 pickUpLocation.name = await rideSvc.getLocationName(pickUpLocation.coordinates[1], pickUpLocation.coordinates[0])
             }
-
-
-
             const ride = await rideSvc.createRide(userId, pickUpLocation, dropOffLocation, vehicleType)
-
             if (!ride) {
                 return res.json({
                     detail: null,
