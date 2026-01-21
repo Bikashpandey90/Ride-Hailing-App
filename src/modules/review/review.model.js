@@ -24,7 +24,6 @@ const reviewSchema = new mongoose.Schema({
     comment: {
         type: String,
         maxlength: 500,
-        trim: true
     },
     ride: {
         type: mongoose.Schema.Types.ObjectId,
